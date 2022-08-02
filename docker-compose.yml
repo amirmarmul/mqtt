@@ -1,0 +1,37 @@
+version: '3'
+services: 
+  mqtt: 
+    image: eclipse-mosquitto:2.0
+    volumes: 
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - /mosquitto/data
+      - /mosquitto/logs
+
+  # API-Gateway
+  # GET /temperature
+  # GET /suhu
+  # GET /....
+  subscriber:
+    image: node:16-alpine
+    working_dir: /home/node/app 
+    environment:
+      BROKER_URL: 
+      BROKER_USERNAME:
+      BROKER_PASSWORD:
+      TOPIC:
+    volumes:
+      - ./:/home/node/app
+    command: ['npm', 'run', 'start:subscriber']
+
+  # SERVICES 
+  publisher:
+    image: node:16-alpine 
+    working_dir: /home/node/app
+    environment:
+      BROKER_URL:
+      BROKER_USERNAME:
+      BROKER_PASSWORD:
+      TOPIC: /temperature
+    volumes:
+      - ./:/home/node/app
+    command: ['npm', 'run', 'start:publisher']
